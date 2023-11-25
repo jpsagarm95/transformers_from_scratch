@@ -2,5 +2,10 @@ __pycache__/
 
 enc_tokenizer.pkl
 dec_tokenizer.pkl
+train_loss.pkl
+val_loss.pkl
+
+checkpoints/
+weights/
 
 test_dataset.txt

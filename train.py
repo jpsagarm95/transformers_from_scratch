@@ -14,7 +14,7 @@ d_model = 512
 d_ff = 2048
 n = 6
 
-epochs = 2
+epochs = 20
 batch_size = 64
 beta_1 = 0.9
 beta_2 = 0.98
