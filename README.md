@@ -1,6 +1,6 @@
 # transformers_from_scratch
 
-Implementation of transformers in tensorflow based on the Building Transformer Models with Attention book by [machine learning wit](https://machinelearningmastery.com/)https://machinelearningmastery.com/.
+Implementation of transformers in tensorflow based on the Building Transformer Models with Attention book by [machinelearningmastery.com](https://machinelearningmastery.com/)
 
 I trained the transformer on the english-german-both.pkl dataset for 20 epochs on my cpu and achieved the training and validation losses as shown in the figure.
 
