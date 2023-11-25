@@ -23,7 +23,8 @@ dropout_rate = 0.1
 
 filename = 'english-german-both.pkl'
 n_sentences = 10000
-train_split = 0.9
+train_split = 0.8
+val_split = 0.1
 
 class LRScheduler(LearningRateSchedule):
     def __init__(self, d_model, warmup_steps=4000, **kwargs):
@@ -39,11 +40,14 @@ class LRScheduler(LearningRateSchedule):
     
 optimizer = Adam(LRScheduler(d_model), beta_1, beta_2, epsilon)
 
-dataset = PrepareDataset(n_sentences, train_split)
-trainX, trainY, train_total, enc_seq_length, dec_seq_length, enc_vocab_size, dec_vocab_size = dataset(filename)
+dataset = PrepareDataset(n_sentences, train_split, val_split)
+trainX, trainY, valX, valY, train_total, val_total, enc_seq_length, dec_seq_length, enc_vocab_size, dec_vocab_size = dataset(filename)
 
 train_dataset = data.Dataset.from_tensor_slices((trainX, trainY))
 train_dataset = train_dataset.batch(batch_size)
+
+val_dataset = data.Dataset.from_tensor_slices((valX, valY))
+val_dataset = val_dataset.batch(batch_size)
 
 training_model = Transformer(enc_vocab_size, dec_vocab_size, enc_seq_length, dec_seq_length, h, d_k, d_v, d_model, d_ff, n, dropout_rate)
 
@@ -58,6 +62,7 @@ def accuracy_fcn(target, prediction):
     mask = cast(mask, float32)
 
     accuracy = equal(target, argmax(prediction, axis=2))
+    accuracy = math.logical_and(mask, accuracy)
     accuracy = cast(accuracy, float32)
 
     return reduce_sum(accuracy)/reduce_sum(mask)
@@ -65,8 +70,13 @@ def accuracy_fcn(target, prediction):
 train_loss = Mean(name='train_loss')
 train_accuracy = Mean(name='train_accuracy')
 
+val_loss = Mean(name='val_loss')
+
 ckpt = train.Checkpoint(model=training_model, optimizer=optimizer)
 ckpt_manager = train.CheckpointManager(ckpt, './checkpoints', max_to_keep=3)
+
+train_loss_dict = {}
+val_loss_dict = {}
 
 @function
 def train_step(encoder_input, decoder_input, decoder_output):

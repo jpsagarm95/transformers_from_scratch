@@ -1,1 +1,6 @@
 __pycache__/
+
+enc_tokenizer.pkl
+dec_tokenizer.pkl
+
+test_dataset.txt
