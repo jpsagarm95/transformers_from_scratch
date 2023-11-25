@@ -32,7 +32,7 @@ class PrepareDataset:
         
         shuffle(dataset)
 
-        train = dataset[:, :int(self.n_sentences * self.train_split)]
+        train = dataset[:int(self.n_sentences * self.train_split)]
 
         enc_tokenizer = self.create_tokenizer(train[:, 0])
         enc_seq_length = self.find_seq_length(train[:, 0])
